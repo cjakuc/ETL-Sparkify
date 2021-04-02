@@ -123,23 +123,36 @@ def process_log_file(cur, filepath):
     user_columns = ["userId", "firstName", "lastName", "gender", "level"]
     user_df = df[user_columns]
 
+    # drop the duplicate rows so the ON CONFLICT UPDATE of level works
+    # because execute_values is running all queries at once so we can't update
+    # the same row twice.
+    # solution is to base duplicates off every col but level and keep the last duplicate
+    # row with the most recent level value
+    final_user_df = user_df.drop_duplicates(subset=["userId", "firstName", "lastName", "gender"],keep='last',ignore_index=True)
+
     # insert user records
-    execute_values(cur=cur, query=user_table_insert, df=user_df)
+    execute_values(cur=cur, query=user_table_insert, df=final_user_df)
 
     # insert songplay records
     # single row insert implementation
     songId = []
     artistId = []
+    song_select_cache = {}
     for index, row in df.iterrows():
         
-        # get songid and artistid from song and artist tables
-        cur.execute(song_select, (row.song, row.artist, row.length))
-        results = cur.fetchone()
-        
-        if results:
-            songid, artistid = results
+        if f"{row.song}{row.artist}{row.length}" in song_select_cache:
+            songid, artistid = song_select_cache[f"{row.song}{row.artist}{row.length}"]
         else:
-            songid, artistid = None, None
+            # get songid and artistid from song and artist tables
+            cur.execute(song_select, (row.song, row.artist, row.length))
+            results = cur.fetchone()
+            
+            if results:
+                songid, artistid = results
+            else:
+                songid, artistid = None, None
+            
+            song_select_cache[f"{row.song}{row.artist}{row.length}"] = (songid, artistid)
 
         songId.append(songid)
         artistId.append(artistid)

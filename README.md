@@ -10,4 +10,6 @@ In order to run this project locally, I used [pgAdmin 4](https://www.pgadmin.org
 
 ![Database Schema](Sparkify_Diagram.png)
 
-The database schema design, shown above, is a star schema with the *Songplays* fact table surround by the *Users*, *Songs*, *Artists*, and *Time* dimension tables. A star schema design offers the benefits of denormalization, simplified queries, and fast aggregation for analysis. In this case, it is very straightforward to analyze Sparkify's songplays data and augment the analysis with the information in the dimensions tables. To see some examples of basic queries and visualizations for analysis, check out the [analysis file](https://github.com/cjakuc/ETL-Sparkify/blob/master/analysis.ipynb).
+The database schema design, shown above, is a star schema with the *Songplays* fact table surround by the *Users*, *Songs*, *Artists*, and *Time* dimension tables. A star schema design offers the benefits of denormalization, simplified queries, and fast aggregation for analysis. In this case, it is very straightforward to analyze Sparkify's songplays data and augment the analysis with the information in the dimensions tables. A star schema also can help reduce data duplication. By using fact and dimensions tables here, the information in the dimensions tables (such as a user's name and gender) was not duplicated in the songplays table. 
+
+To see some examples of basic queries and visualizations for analysis, check out the [analysis file](https://github.com/cjakuc/ETL-Sparkify/blob/master/analysis.ipynb).

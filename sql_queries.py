@@ -10,8 +10,8 @@ time_table_drop = "DROP TABLE IF EXISTS time"
 
 songplay_table_create = ("""
 CREATE TABLE IF NOT EXISTS songplays(songplay_id SERIAL PRIMARY KEY,
-                                     start_time timestamp,
-                                     user_id int,
+                                     start_time timestamp NOT NULL REFERENCES time ON DELETE SET NULL,
+                                     user_id int NOT NULL REFERENCES users ON DELETE SET NULL,
                                      level varchar,
                                      song_id varchar,
                                      artist_id varchar,
@@ -56,25 +56,25 @@ CREATE TABLE IF NOT EXISTS time(start_time timestamp PRIMARY KEY,
 
 # ADD FOREIGN KEYS
 
-songplay_table_fks = """
-ALTER TABLE songplays
-ADD CONSTRAINT fk_start_time
-        FOREIGN KEY (start_time)
-            REFERENCES time (start_time)
-            ON DELETE SET NULL,
-ADD CONSTRAINT fk_user_id
-        FOREIGN KEY (user_id)
-            REFERENCES users (user_id)
-            ON DELETE SET NULL,
-ADD CONSTRAINT fk_song_id
-        FOREIGN KEY (song_id)
-            REFERENCES songs (song_id)
-            ON DELETE NO ACTION,
-ADD CONSTRAINT fk_artist_id
-        FOREIGN KEY (artist_id)
-            REFERENCES artists (artist_id)
-            ON DELETE NO ACTION;
-"""
+# songplay_table_fks = """
+# ALTER TABLE songplays
+# ADD CONSTRAINT fk_start_time
+#         FOREIGN KEY (start_time)
+#             REFERENCES time (start_time)
+#             ON DELETE SET NULL,
+# ADD CONSTRAINT fk_user_id
+#         FOREIGN KEY (user_id)
+#             REFERENCES users (user_id)
+#             ON DELETE SET NULL,
+# ADD CONSTRAINT fk_song_id
+#         FOREIGN KEY (song_id)
+#             REFERENCES songs (song_id)
+#             ON DELETE NO ACTION,
+# ADD CONSTRAINT fk_artist_id
+#         FOREIGN KEY (artist_id)
+#             REFERENCES artists (artist_id)
+#             ON DELETE NO ACTION;
+# """
 
 # user_table_fks = """
 # ALTER TABLE users
@@ -84,13 +84,13 @@ ADD CONSTRAINT fk_artist_id
 #         ON DELETE SET NULL;
 # """
 
-song_table_fks = """
-ALTER TABLE songs
-ADD CONSTRAINT fk_artist_id
-    FOREIGN KEY (artist_id)
-        REFERENCES artists (artist_id)
-        ON DELETE SET NULL;
-"""
+# song_table_fks = """
+# ALTER TABLE songs
+# ADD CONSTRAINT fk_artist_id
+#     FOREIGN KEY (artist_id)
+#         REFERENCES artists (artist_id)
+#         ON DELETE SET NULL;
+# """
 
 # artist_table_fks = """
 # ALTER TABLE artists
@@ -121,7 +121,7 @@ user_table_insert = (
 """
 INSERT INTO users (user_id, first_name, last_name, gender, level)
 VALUES %s
-ON CONFLICT (user_id) DO NOTHING
+ON CONFLICT (user_id) DO UPDATE SET level=EXCLUDED.level
 """
 )
 
@@ -168,11 +168,10 @@ WHERE
 
 # QUERY LISTS
 
-create_table_queries = [songplay_table_create, user_table_create,
+create_table_queries = [user_table_create,
                         song_table_create, artist_table_create,
-                        time_table_create
-                        # ,songplay_table_fks 
-                        # ,song_table_fks
+                        time_table_create,
+                        songplay_table_create
                         ]
 drop_table_queries = [songplay_table_drop, user_table_drop,
                       song_table_drop, artist_table_drop, time_table_drop]
