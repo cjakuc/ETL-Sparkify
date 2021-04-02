@@ -13,8 +13,8 @@ CREATE TABLE IF NOT EXISTS songplays(songplay_id SERIAL PRIMARY KEY,
                                      start_time timestamp NOT NULL REFERENCES time ON DELETE SET NULL,
                                      user_id int NOT NULL REFERENCES users ON DELETE SET NULL,
                                      level varchar,
-                                     song_id varchar,
-                                     artist_id varchar,
+                                     song_id varchar REFERENCES songs ON DELETE SET NULL,
+                                     artist_id varchar REFERENCES artists ON DELETE SET NULL,
                                      session_id int,
                                      location varchar,
                                      user_agent varchar)
@@ -172,6 +172,8 @@ create_table_queries = [user_table_create,
                         song_table_create, artist_table_create,
                         time_table_create,
                         songplay_table_create
+                        # ,songplay_table_fks 
+                        # ,song_table_fks
                         ]
 drop_table_queries = [songplay_table_drop, user_table_drop,
                       song_table_drop, artist_table_drop, time_table_drop]
