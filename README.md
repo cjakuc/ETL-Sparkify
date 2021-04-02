@@ -5,3 +5,5 @@ Sparkify is a fictional music streaming app. They have stored all of their song 
 ## Database Schema and ETL Pipeline
 
 ![Database Schema](Sparkify_Diagram.png)
+
+The database schema design, shown above, is a simple star schema with the *Songplays* fact table surround by the *Users*, *Songs*, *Artists*, and *Time* dimension tables. A star schema design offers the benefits of denormalization, simplified queries, and fast aggregation for analysis. In this case, it is very straightforward to analyze Sparkify's songplays data and augment the analysis with the information in the dimensions tables. To see some examples of queries for analysis, check out the [analysis.ipynb file]().
